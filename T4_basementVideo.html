@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html> 
+<html> 
+	<head>
+	  <title>T4 Video Walkthrough</title>
+	  <meta charset="utf-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
+    <link rel="stylesheet" href="https://cdn.pannellum.org/2.5/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.pannellum.org/2.5/pannellum.js"></script>
+
+    <link href="https://vjs.zencdn.net/7.1.0/video-js.css" rel="stylesheet"
+      type="text/css">
+    <script src="https://vjs.zencdn.net/7.1.0/video.js"></script>
+
+
+<script>
+ (function(document, videojs, pannellum) {
+'use strict';
+
+var registerPlugin = videojs.registerPlugin || videojs.plugin;  // Use registerPlugin for Video.js >= 6
+registerPlugin('pannellum', function(config) {
+    // Create Pannellum instance
+    var player = this;
+    var container = player.el();
+    var vid = container.getElementsByTagName('video')[0],
+        pnlmContainer = document.createElement('div');
+    pnlmContainer.style.zIndex = '0';
+    config = config || {};
+    config.type = 'equirectangular';
+    config.dynamic = true;
+    config.showZoomCtrl = false;
+    config.showFullscreenCtrl = false;
+    config.autoLoad = true;
+    config.panorama = vid;
+    pnlmContainer.style.visibility = 'hidden';
+    player.pnlmViewer = pannellum.viewer(pnlmContainer, config);
+    container.insertBefore(pnlmContainer, container.firstChild);
+    vid.style.display = 'none';
+
+    // Handle update settings
+    player.on('play', function() {
+        if (vid.readyState > 1)
+            player.pnlmViewer.setUpdate(true);
+    });
+    player.on('canplay', function() {
+        if (!player.paused())
+            player.pnlmViewer.setUpdate(true);
+    });
+    player.on('pause', function() {
+        player.pnlmViewer.setUpdate(false);
+    });
+    player.on('loadeddata', function() {
+        pnlmContainer.style.visibility = 'visible';
+    });
+    player.on('seeking', function() {
+        if (player.paused())
+            player.pnlmViewer.setUpdate(true);
+    });
+    player.on('seeked', function() {
+        if (player.paused())
+            player.pnlmViewer.setUpdate(false);
+    });
+});
+
+})(document, videojs, pannellum);
+
+ </script>
+  	<style>
+     td, p {
+       text-align: left;
+       vertical-align: top;
+       font-family: Arial, Helvetica, sans-serif;
+     }
+     th {
+       text-align:right;
+       font-family: Arial, Helvetica, sans-serif;
+       font-weight: bold;
+     }
+     h3 {
+       text-align: left;
+       font-family: Arial, Helvetica, sans-serif;
+  	 }
+     
+     p.credits, li {
+       font-family: Arial, Helvetica, sans-serif;
+       font-size: 8 px;
+       color: gray;
+      }
+       
+  	</style>
+  		
+  </head>
+  	
+<body> 
+				<h3>T4 Video Walkthrough</h3>
+
+ 
+  <table>  
+    <tr>	
+	  <td>
+<video id="myVideo" class="video-js vjs-default-skin vjs-big-play-centered"
+  controls preload="none" style="width:100%;height:400px;" crossorigin="anonymous">
+    
+    <source src="https://pophtmltest.s3-us-west-2.amazonaws.com/Basement+Walk+1.mp4" type="video/mp4">
+    <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to
+        a web browser that <a href="http://videojs.com/html5-video-support/"
+        target="_blank">supports HTML5 video</a>
+    </p>
+</video>
+
+      </td>
+      <td>
+    	  <div id="map" style="width: 640px; height: 360px"></div>
+      </td>
+    </tr>
+    <tr>
+  	  <td>
+  		  <table width="640">
+  			  <tr><th width="25%">Latitude:</th><td width="25%"><span id="currentLatitude"></span></td></tr>
+  			  <tr></td><th>Longitude:</th><td><span id="currentLongitude"></span></td></tr>
+  			  <tr><th>Altitude:</th><td><span id="currentAltitude"></span></td></tr>
+  			  <tr><th>Video Time:</th><td><span id="currentVideoTime"></span></td><th> </th></tr>
+  		  </table>
+     	</td>
+  	  <td>
+  		  <form>
+  		    <input type="checkbox" id="followmarker" checked> Follow marker</br>
+        </form>
+  	  </td>
+    </tr>		
+  </table>
+
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+  <script type="text/javascript" src="https://stamen-maps.a.ssl.fastly.net/js/tile.stamen.js"></script>
+<!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@3.0.1/dist/esri-leaflet.js"
+    integrity="sha512-JmpptMCcCg+Rd6x0Dbg6w+mmyzs1M7chHCd9W8HPovnImG2nLAQWn3yltwxXRM7WjKKFFHOAKjjF2SC4CgiFBg=="
+    crossorigin=""></script>
+
+  <script>
+
+// JSON of the track, comes from FME, contains x,y,z, and relative time from the beginning of the video for each GPS point
+
+  var track_array = { "start_latitude" : 45.605248714299996, "start_longitude" : -122.77495915999999, "video_duration" : 69, "coords" : [ { "x" : -122.77495915999999, "y" : 45.605248714299996, "z" : 0, "frame_time" : 0 }, { "x" : -122.774959088, "y" : 45.605258622800001, "z" : 0, "frame_time" : 5 }, { "x" : -122.77495834, "y" : 45.605281797700002, "z" : 0, "frame_time" : 8 }, { "x" : -122.774957534, "y" : 45.605306782100001, "z" : 0, "frame_time" : 14 }, { "x" : -122.77495711900001, "y" : 45.605319634200001, "z" : 0, "frame_time" : 20 }, { "x" : -122.774967535, "y" : 45.605319665300001, "z" : 0, "frame_time" : 30 }, { "x" : -122.77499441499999, "y" : 45.605333475800002, "z" : 0, "frame_time" : 37 }, { "x" : -122.774994788, "y" : 45.605319746900001, "z" : 0, "frame_time" : 34 }, { "x" : -122.77500261599999, "y" : 45.605307341600003, "z" : 0, "frame_time" : 46 }, { "x" : -122.77500308400001, "y" : 45.6052835562, "z" : 0, "frame_time" : 50 }, { "x" : -122.775003481, "y" : 45.605263374899998, "z" : 0, "frame_time" : 57 }, { "x" : -122.77498581, "y" : 45.605250998599999, "z" : 0, "frame_time" : 60 }, { "x" : -122.77496677400001, "y" : 45.605249475699999, "z" : 0, "frame_time" : 65 } ] }
+
+
+  var vid = document.getElementById("myVideo");
+
+// Leaflet basemap layers
+// center of the map
+
+
+// Create the map
+var map = L.map('map').setView([45.6053763, -122.7749654], 20);
+
+   L.esri.tiledMapLayer({
+    url: 'https://tiles.arcgis.com/tiles/DSTsMrzgcyf3Fkz4/arcgis/rest/services/basement_coords/MapServer',
+    maxZoom: 23
+  }).addTo(map);
+
+// Define custom icon
+
+  var myIcon = L.icon({
+    iconUrl: 'leaf-green.png',
+    iconSize: [40, 60],
+    iconAnchor: [20, 30],
+  });	
+
+// Add marker for the moving object
+
+var marker = L.marker([45.6052487143,-122.77495916],{icon: myIcon}).addTo(map);
+    
+// Rebuild track from all the JSON points (each JSON point represents a videoframe)
+// loop through all points and add coordinate pairs to the array
+
+	function trackpoint2polyline(){
+		var i;
+		var coordinate_pairs = "";
+		for (i in track_array.coords) {
+		  coordinate_pairs += "[" + track_array.coords[i].y + "," + track_array.coords[i].x+"]";
+		}
+		coordinate_pairs = coordinate_pairs.replace(/\]\[/g, "],[");
+		coordinate_pairs = "["+coordinate_pairs+"]";
+		return coordinate_pairs;
+	}	
+	
+// add the track to the map
+	var trackpoints = trackpoint2polyline();
+	trackpoints = JSON.parse(trackpoints); 	
+	var track = L.polyline(trackpoints, {color:'salmon'}).addTo(map);
+	
+// Add reaction on click on track (move to that position in video)
+
+	track.on('click', clickOnTrack);
+	
+	function clickOnTrack(ev){
+
+	  var distances = [];
+// loop through all points, calculate the distance between the click on the map and all the points,
+// make an array of arrays as [time, distance]
+      for (i in track_array.coords) {
+    	current_point = JSON.parse("[" + track_array.coords[i].y + "," + track_array.coords[i].x+"]");
+    	current_distance = (Math.round(ev.latlng.distanceTo(current_point)));
+
+// Two-dimensional array (array of arrays)
+    	distances.push(JSON.parse("["+track_array.coords[i].frame_time + "," + current_distance + "]"));
+    }
+// sort ascendingly by distance, use shortest distance to find time closest to current location, set it
+    distances.sort(function(a, b){return a[1]-b[1]});
+    vid.currentTime = (distances[0][0]);
+	};
+
+    
+// define behavior when video plays (video time changes)    
+  vid.ontimeupdate = function() {VideoFeed()};
+
+  
+  function VideoFeed() {
+    
+// calculate current position index (the gps point closest to the current video time)
+    var time_marks = [];
+    
+// build an array as [time-difference, index] where time-difference is the difference between current time and times in GPS JSON.
+    for (i in track_array.coords) {
+    	current_time_mark = track_array.coords[i].frame_time;
+    	time_marks.push(JSON.parse("[" + Math.abs(current_time_mark - Math.round(vid.currentTime)) + "," + i + "]"));
+    }
+// find where the difference is the smallest (this will indicate the closest coordinate to the video time) by sorting by time differences ascendingly
+    time_marks.sort(function(a, b){return a[0]-b[0]});
+    cur_position = (time_marks[0][1]);
+
+// using current position index, set x, y, and elevation variables. Here, any other additional information can be added to HTML (see workspace)
+    
+    var cur_x = track_array.coords[cur_position].x;
+    var cur_y = track_array.coords[cur_position].y;
+    var cur_altitude = track_array.coords[cur_position].z;
+    var cur_video_time = Math.round(vid.currentTime);
+
+// set new location to the marker    
+    marker.setLatLng([cur_y, cur_x]);
+
+// update map center if 'Follow Marker' is checked    
+    if (document.getElementById("followmarker").checked) {
+      map.setView([cur_y, cur_x]);
+    }  
+
+// Update text fields below video
+    
+    // Display the current position of the video in a p element with id="currentTime"
+    document.getElementById("currentLatitude").innerHTML = cur_y;
+    document.getElementById("currentLongitude").innerHTML = cur_x;
+    document.getElementById("currentAltitude").innerHTML = cur_altitude + ' m';
+    document.getElementById("currentVideoTime").innerHTML = cur_video_time + " seconds";
+  
+  } 
+
+videojs("myVideo", {
+    plugins: {
+        pannellum: {}
+    }
+});
+
+
+  </script>
+
+</body> 
+</html>
