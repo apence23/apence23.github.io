@@ -7,22 +7,8 @@
   	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
     
-	<script src="https://vjs.zencdn.net/7.1.0/video.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
-
-<script>
-var myPlayer = videojs('myVideo');
-myPlayer.ready(function () {
-  console.log("downloadvideo");
-  
-  setTimeout(function(){
-    console.log("stop video");
-    //myPlayer.play();
-    myPlayer.pause()
- }, 10000)
-});
-
- </script>
+	<link rel='stylesheet' href='https://cdn.bootcss.com/video.js/6.2.4/alt/video-js-cdn.min.css'><link rel="stylesheet" href="./style.css">
+	
   	<style>
      td, p {
        text-align: left;
@@ -56,13 +42,18 @@ myPlayer.ready(function () {
   <table>  
     <tr>	
 	  <td>
-<video
-  id="myVideo"
-  class="video-js vjs-default-skin"
-  width="640" height="264"
-  data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=xjS6SftYQaQ"}]}'
->
-</video>
+ <video
+    id="vid1"
+    class="video-js vjs-default-skin"
+    controls
+    width="640" height="264"
+    data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://youtu.be/Jb4prVsXkZU"}] }'
+  >
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a web browser that
+      <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+  </video>
 
       </td>
       <td>
@@ -85,7 +76,8 @@ myPlayer.ready(function () {
   	  </td>
     </tr>		
   </table>
-
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdn.bootcss.com/video.js/6.2.4/alt/video.novtt.min.js'></script><script  src="./script.js"></script>
  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
@@ -104,7 +96,7 @@ myPlayer.ready(function () {
   var track_array = { "start_latitude" : 45.605248714299996, "start_longitude" : -122.77495915999999, "video_duration" : 69, "coords" : [ { "x" : -122.77495915999999, "y" : 45.605248714299996, "z" : 0, "frame_time" : 0 }, { "x" : -122.774959088, "y" : 45.605258622800001, "z" : 0, "frame_time" : 5 }, { "x" : -122.77495834, "y" : 45.605281797700002, "z" : 0, "frame_time" : 8 }, { "x" : -122.774957534, "y" : 45.605306782100001, "z" : 0, "frame_time" : 14 }, { "x" : -122.77495711900001, "y" : 45.605319634200001, "z" : 0, "frame_time" : 20 }, { "x" : -122.774967535, "y" : 45.605319665300001, "z" : 0, "frame_time" : 30 }, { "x" : -122.77499441499999, "y" : 45.605333475800002, "z" : 0, "frame_time" : 37 }, { "x" : -122.774994788, "y" : 45.605319746900001, "z" : 0, "frame_time" : 34 }, { "x" : -122.77500261599999, "y" : 45.605307341600003, "z" : 0, "frame_time" : 46 }, { "x" : -122.77500308400001, "y" : 45.6052835562, "z" : 0, "frame_time" : 50 }, { "x" : -122.775003481, "y" : 45.605263374899998, "z" : 0, "frame_time" : 57 }, { "x" : -122.77498581, "y" : 45.605250998599999, "z" : 0, "frame_time" : 60 }, { "x" : -122.77496677400001, "y" : 45.605249475699999, "z" : 0, "frame_time" : 65 } ] }
 
 
-  var vid = document.getElementById("myVideo");
+  var vid = document.getElementById("vid1");
 
 // Leaflet basemap layers
 // center of the map
@@ -212,13 +204,9 @@ var marker = L.marker([45.6052487143,-122.77495916],{icon: myIcon}).addTo(map);
     document.getElementById("currentAltitude").innerHTML = cur_altitude + ' m';
     document.getElementById("currentVideoTime").innerHTML = cur_video_time + " seconds";
   
-  } 
+  };
 
-videojs("myVideo", {
-    plugins: {
-        pannellum: {}
-    }
-});
+
 
 
   </script>
